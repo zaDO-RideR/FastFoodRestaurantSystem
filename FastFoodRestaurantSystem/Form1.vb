@@ -5,7 +5,7 @@
         Dim password As String = txtPassword.Text
 
         If username = "admin" And password = "1199" Then
-            MessegeBox.Show("Login successful", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("Login successful", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Dim dashboard As New DashboardForm()
             dashboard.Show()
             Me.Hide()
