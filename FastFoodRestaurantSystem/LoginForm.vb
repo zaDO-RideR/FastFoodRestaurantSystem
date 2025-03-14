@@ -1,4 +1,4 @@
-﻿Public Class Form1
+﻿Public Class LoginForm
     Private Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
 
         Dim username As String = txtUsername.Text
