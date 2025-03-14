@@ -11,4 +11,9 @@
         Dim orderForm As New OrderForm()
         orderForm.Show()
     End Sub
+
+    Private Sub btnIneventory_Click(sender As Object, e As EventArgs) Handles btnIneventory.Click
+        Dim inventoryForm As New InventoryForm()
+        inventoryForm.Show()
+    End Sub
 End Class
