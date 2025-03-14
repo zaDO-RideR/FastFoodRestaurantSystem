@@ -1,4 +1,6 @@
-﻿Public Class OrderForm
+﻿Imports System.Drawing.Text
+
+Public Class OrderForm
     Private Function GetPrice(item As String) As Decimal
         Select Case True
             Case item.Contains("Burgar") : Return 700
@@ -39,5 +41,16 @@
         ' Update total price
         Dim currentTotal As Decimal = Convert.ToDecimal(lblTotal.Text.Replace("Total: $", ""))
         lblTotal.Text = $"Total: {currentTotal + totalPrice}LKR"
+    End Sub
+
+    Private Sub btnCheckout_Click(sender As Object, e As EventArgs) Handles btnCheckout.Click
+        If lstOrderDetails.Items.Count = 0 Then
+            MessageBox.Show("Cart is empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        MessageBox.Show("Order placed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        lstOrderDetails.Items.Clear()
+        lblTotal.Text = "Total: $0"
     End Sub
 End Class
