@@ -24,7 +24,7 @@ Partial Class OrderForm
     Private Sub InitializeComponent()
         Me.cmbFoodItems = New System.Windows.Forms.ComboBox()
         Me.txtQuantity = New System.Windows.Forms.TextBox()
-        Me.btnAddToOrder = New System.Windows.Forms.Button()
+        Me.btnAddToCart = New System.Windows.Forms.Button()
         Me.lstOrderDetails = New System.Windows.Forms.ListBox()
         Me.lblTotal = New System.Windows.Forms.Label()
         Me.btnCheckout = New System.Windows.Forms.Button()
@@ -45,14 +45,14 @@ Partial Class OrderForm
         Me.txtQuantity.Size = New System.Drawing.Size(100, 20)
         Me.txtQuantity.TabIndex = 1
         '
-        'btnAddToOrder
+        'btnAddToCart
         '
-        Me.btnAddToOrder.Location = New System.Drawing.Point(510, 62)
-        Me.btnAddToOrder.Name = "btnAddToOrder"
-        Me.btnAddToOrder.Size = New System.Drawing.Size(75, 23)
-        Me.btnAddToOrder.TabIndex = 2
-        Me.btnAddToOrder.Text = "Add to cart"
-        Me.btnAddToOrder.UseVisualStyleBackColor = True
+        Me.btnAddToCart.Location = New System.Drawing.Point(510, 62)
+        Me.btnAddToCart.Name = "btnAddToCart"
+        Me.btnAddToCart.Size = New System.Drawing.Size(75, 23)
+        Me.btnAddToCart.TabIndex = 2
+        Me.btnAddToCart.Text = "Add to cart"
+        Me.btnAddToCart.UseVisualStyleBackColor = True
         '
         'lstOrderDetails
         '
@@ -90,7 +90,7 @@ Partial Class OrderForm
         Me.Controls.Add(Me.btnCheckout)
         Me.Controls.Add(Me.lblTotal)
         Me.Controls.Add(Me.lstOrderDetails)
-        Me.Controls.Add(Me.btnAddToOrder)
+        Me.Controls.Add(Me.btnAddToCart)
         Me.Controls.Add(Me.txtQuantity)
         Me.Controls.Add(Me.cmbFoodItems)
         Me.Name = "OrderForm"
@@ -102,7 +102,7 @@ Partial Class OrderForm
 
     Friend WithEvents cmbFoodItems As ComboBox
     Friend WithEvents txtQuantity As TextBox
-    Friend WithEvents btnAddToOrder As Button
+    Friend WithEvents btnAddToCart As Button
     Friend WithEvents lstOrderDetails As ListBox
     Friend WithEvents lblTotal As Label
     Friend WithEvents btnCheckout As Button
