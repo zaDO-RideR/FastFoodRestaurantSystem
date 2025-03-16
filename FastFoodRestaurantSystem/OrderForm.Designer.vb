@@ -22,6 +22,7 @@ Partial Class OrderForm
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.cmbFoodItems = New System.Windows.Forms.ComboBox()
         Me.txtQuantity = New System.Windows.Forms.TextBox()
         Me.btnAddToCart = New System.Windows.Forms.Button()
@@ -33,6 +34,15 @@ Partial Class OrderForm
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
+        Me.DataGridViewOrders = New System.Windows.Forms.DataGridView()
+        Me.BuddyFastDataSet = New FastFoodRestaurantSystem.BuddyFastDataSet()
+        Me.BuddyFastDataSetBindingSource = New System.Windows.Forms.BindingSource(Me.components)
+        Me.DataGridViewCart = New System.Windows.Forms.DataGridView()
+        Me.btnRemove = New System.Windows.Forms.Button()
+        CType(Me.DataGridViewOrders, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.BuddyFastDataSet, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.BuddyFastDataSetBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DataGridViewCart, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'cmbFoodItems
@@ -84,7 +94,7 @@ Partial Class OrderForm
         '
         Me.btnCheckout.BackColor = System.Drawing.Color.IndianRed
         Me.btnCheckout.ForeColor = System.Drawing.SystemColors.ButtonFace
-        Me.btnCheckout.Location = New System.Drawing.Point(594, 372)
+        Me.btnCheckout.Location = New System.Drawing.Point(688, 397)
         Me.btnCheckout.Name = "btnCheckout"
         Me.btnCheckout.Size = New System.Drawing.Size(75, 23)
         Me.btnCheckout.TabIndex = 5
@@ -141,11 +151,55 @@ Partial Class OrderForm
         Me.Label4.TabIndex = 15
         Me.Label4.Text = "Cart"
         '
+        'DataGridViewOrders
+        '
+        Me.DataGridViewOrders.AutoGenerateColumns = False
+        Me.DataGridViewOrders.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridViewOrders.DataSource = Me.BuddyFastDataSetBindingSource
+        Me.DataGridViewOrders.Location = New System.Drawing.Point(52, 270)
+        Me.DataGridViewOrders.Name = "DataGridViewOrders"
+        Me.DataGridViewOrders.Size = New System.Drawing.Size(240, 150)
+        Me.DataGridViewOrders.TabIndex = 16
+        '
+        'BuddyFastDataSet
+        '
+        Me.BuddyFastDataSet.DataSetName = "BuddyFastDataSet"
+        Me.BuddyFastDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
+        'BuddyFastDataSetBindingSource
+        '
+        Me.BuddyFastDataSetBindingSource.DataSource = Me.BuddyFastDataSet
+        Me.BuddyFastDataSetBindingSource.Position = 0
+        '
+        'DataGridViewCart
+        '
+        Me.DataGridViewCart.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.DataGridViewCart.Location = New System.Drawing.Point(523, 170)
+        Me.DataGridViewCart.Name = "DataGridViewCart"
+        Me.DataGridViewCart.Size = New System.Drawing.Size(240, 150)
+        Me.DataGridViewCart.TabIndex = 17
+        '
+        'btnRemove
+        '
+        Me.btnRemove.BackColor = System.Drawing.Color.LightCoral
+        Me.btnRemove.Font = New System.Drawing.Font("Consolas", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnRemove.ForeColor = System.Drawing.Color.White
+        Me.btnRemove.Location = New System.Drawing.Point(469, 336)
+        Me.btnRemove.Name = "btnRemove"
+        Me.btnRemove.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.btnRemove.Size = New System.Drawing.Size(100, 23)
+        Me.btnRemove.TabIndex = 18
+        Me.btnRemove.Text = "Remove"
+        Me.btnRemove.UseVisualStyleBackColor = False
+        '
         'OrderForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(800, 450)
+        Me.Controls.Add(Me.btnRemove)
+        Me.Controls.Add(Me.DataGridViewCart)
+        Me.Controls.Add(Me.DataGridViewOrders)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
@@ -159,6 +213,10 @@ Partial Class OrderForm
         Me.Controls.Add(Me.cmbFoodItems)
         Me.Name = "OrderForm"
         Me.Text = "OrderForm"
+        CType(Me.DataGridViewOrders, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.BuddyFastDataSet, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.BuddyFastDataSetBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DataGridViewCart, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -175,4 +233,9 @@ Partial Class OrderForm
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
     Friend WithEvents Label4 As Label
+    Friend WithEvents DataGridViewOrders As DataGridView
+    Friend WithEvents BuddyFastDataSetBindingSource As BindingSource
+    Friend WithEvents BuddyFastDataSet As BuddyFastDataSet
+    Friend WithEvents DataGridViewCart As DataGridView
+    Friend WithEvents btnRemove As Button
 End Class
