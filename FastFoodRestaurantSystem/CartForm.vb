@@ -53,8 +53,37 @@ Public Class CartForm
 
 
     Private Sub btnCheckout_Click(sender As Object, e As EventArgs) Handles btnCheckout.Click
-        MessageBox.Show("Proceeding to Payment Gateway...")
+        If lstCart.Items.Count = 0 Then
+            MessageBox.Show("Your cart is empty! Add items before proceeding.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        ' Calculate total amount
+        Dim totalAmount As Decimal = 0 ' Use Decimal instead of Integer
+        For Each item As ListViewItem In lstCart.Items
+            Dim subtotalText As String = item.SubItems(3).Text ' Get subtotal as text
+            Dim subtotalNumeric As Decimal ' Use Decimal instead of Integer
+
+            ' Remove any non-numeric characters (like $) and convert to decimal
+            If Decimal.TryParse(subtotalText.Replace("$", "").Trim(), subtotalNumeric) Then
+                totalAmount += subtotalNumeric
+            Else
+                MessageBox.Show("Error converting subtotal: " & subtotalText, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
+        Next
+
+
+        ' Open PaymentForm
+        Dim paymentForm As New PaymentForm(totalAmount)
+        If paymentForm.ShowDialog() = DialogResult.OK Then
+            ' Payment was successful, clear the cart
+            lstCart.Items.Clear()
+            lblTotalPrice.Text = "$0.00"
+            MessageBox.Show("Order placed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
     End Sub
+
 
     Private Sub btnUpdate_Click(sender As Object, e As EventArgs) Handles btnUpdateItem.Click
         If lstCart.SelectedItems.Count = 0 Then
