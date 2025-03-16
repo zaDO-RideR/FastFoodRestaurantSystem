@@ -1,4 +1,5 @@
-﻿Imports System.Drawing.Text
+﻿Imports System.Data.SqlClient
+Imports System.Drawing.Text
 
 Public Class OrderForm
     Private Function GetPrice(item As String) As Decimal
@@ -36,11 +37,17 @@ Public Class OrderForm
 
         Dim price As Decimal = GetPrice(selectedItem)
         Dim totalPrice As Decimal = price * quantity
-        lstOrderDetails.Items.Add($"{selectedItem} x {quantity} = {totalPrice}LKR")
+        lstOrderDetails.Items.Add($"{selectedItem} x {quantity} = LKR {totalPrice}")
 
         ' Update total price
-        Dim currentTotal As Decimal = Convert.ToDecimal(lblTotal.Text.Replace("Total: $", ""))
-        lblTotal.Text = $"Total: {currentTotal + totalPrice}LKR"
+        Dim currentTotal As Decimal
+        Dim cleanedText As String = lblTotal.Text.Replace("Total: LKR ", "")
+
+        If Not Decimal.TryParse(cleanedText, currentTotal) Then
+            currentTotal = 0
+        End If
+
+        lblTotal.Text = $"Total: LKR " & (currentTotal + totalPrice).ToString()
     End Sub
 
     Private Sub btnCheckout_Click(sender As Object, e As EventArgs) Handles btnCheckout.Click
@@ -49,8 +56,23 @@ Public Class OrderForm
             Return
         End If
 
-        MessageBox.Show("Order placed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
-        lstOrderDetails.Items.Clear()
-        lblTotal.Text = "Total: $0"
+        Dim conn As New SqlConnection("Data Source=DESKTOP-UOJJNB0;Initial Catalog=BuddyFast;Integrated Security=True")
+        conn.Open()
+
+        For Each item As String In lstOrderDetails.Items
+            Dim parts() As String = item.Split(" x")
+            Dim foodItem As String = parts(0).Trim()
+            Dim quantity As Integer = Convert.ToInt32(parts(1).Split("=")(0).Trim())
+            Dim totalPrice As Decimal = GetPrice(foodItem) * quantity
+
+            Dim cmd As New SqlCommand("INSERT INTO Orders (FoodItem, Quantity, TotalPrice) VALUES (@FoodItem, @Quantity, @TotalPrice)", conn)
+            cmd.Parameters.AddWithValue("@FoodItem", foodItem)
+            cmd.Parameters.AddWithValue("@Quantity", quantity)
+            cmd.Parameters.AddWithValue("@TotalPrice", totalPrice)
+            cmd.ExecuteNonQuery()
+        Next
+
+        conn.Close()
+        MessageBox.Show("Order saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 End Class
