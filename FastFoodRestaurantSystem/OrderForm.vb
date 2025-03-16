@@ -1,95 +1,69 @@
 ﻿Imports System.Data.SqlClient
 
 Public Class OrderForm
-    Dim connection As New SqlConnection("Data Source=DESKTOP-UOJJNB0;Initial Catalog=BuddyFast;Integrated Security=True")
-    Dim cart As New DataTable()
+    Private connectionString As String = "Data Source=DESKTOP-UOJJNB0;Initial Catalog=BuddyFast;Integrated Security=True"
+    Private cart As New Dictionary(Of String, Integer) ' Key: Item Name, Value: Quantity
 
     Private Sub OrderForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        LoadOrders()
-        cart.Columns.Add("Item")
-        cart.Columns.Add("Quantity", GetType(Integer))
-        cart.Columns.Add("Price", GetType(Decimal))
-        DataGridViewCart.DataSource = cart
+        LoadInventory()
+        UpdateTotalPrice()
     End Sub
 
-    Private Sub LoadOrders()
-        Dim query As String = "SELECT * FROM Inventory WHERE quantity > 0"
-        Dim adapter As New SqlDataAdapter(query, connection)
-        Dim table As New DataTable()
-        adapter.Fill(table)
-        DataGridViewOrders.DataSource = table
+    Private Sub LoadInventory()
+        lstInventory.Items.Clear()
+        Using conn As New SqlConnection(connectionString)
+            conn.Open()
+            Dim cmd As New SqlCommand("SELECT ItemName, ItemPrice, Quantity FROM Inventory", conn)
+            Dim reader As SqlDataReader = cmd.ExecuteReader()
+            While reader.Read()
+                Dim item As New ListViewItem(reader("ItemName").ToString())
+                item.SubItems.Add(reader("ItemPrice").ToString())
+                item.SubItems.Add(reader("Quantity").ToString())
+                lstInventory.Items.Add(item)
+            End While
+        End Using
     End Sub
 
     Private Sub btnAddToCart_Click(sender As Object, e As EventArgs) Handles btnAddToCart.Click
-        Dim selectedRow As DataGridViewRow = DataGridViewOrders.CurrentRow
-        If selectedRow IsNot Nothing Then
-            Dim item As String = selectedRow.Cells("name").Value.ToString()
-            Dim price As Decimal = Convert.ToDecimal(selectedRow.Cells("price").Value)
-            Dim quantity As Integer = Convert.ToInt32(txtQuantity.Text)
+        If lstInventory.SelectedItems.Count = 0 Then
+            MessageBox.Show("Please select an item first.")
+            Return
+        End If
 
-            ' Check stock availability
-            Dim stock As Integer = Convert.ToInt32(selectedRow.Cells("quantity").Value)
-            If quantity > stock Then
-                MessageBox.Show("Not enough stock available.")
-                Return
+        Dim selectedItem As ListViewItem = lstInventory.SelectedItems(0)
+        Dim itemName As String = selectedItem.Text
+        Dim itemPrice As Decimal = Decimal.Parse(selectedItem.SubItems(1).Text)
+        Dim availableStock As Integer = Integer.Parse(selectedItem.SubItems(2).Text)
+        Dim currentQuantity As Integer = If(cart.ContainsKey(itemName), cart(itemName), 0)
+
+        Dim addToCartForm As New AddToCartForm(itemName, itemPrice, availableStock, currentQuantity)
+        If addToCartForm.ShowDialog() = DialogResult.OK Then
+            Dim quantity As Integer = addToCartForm.SelectedQuantity
+            If quantity > 0 Then
+                cart(itemName) = quantity
+            Else
+                cart.Remove(itemName)
             End If
-
-            cart.Rows.Add(item, quantity, price * quantity)
-            CalculateTotal()
+            UpdateTotalPrice()
         End If
     End Sub
 
-    Private Sub btnRemove_Click(sender As Object, e As EventArgs) Handles btnRemove.Click
-        If DataGridViewCart.SelectedRows.Count > 0 Then
-            DataGridViewCart.Rows.Remove(DataGridViewCart.SelectedRows(0))
-            CalculateTotal()
-        End If
+    Private Sub btnViewCart_Click(sender As Object, e As EventArgs) Handles btnViewCart.Click
+        Dim cartForm As New CartForm(cart)
+        cartForm.ShowDialog()
+        UpdateTotalPrice()
     End Sub
 
-    Private Sub CalculateTotal()
+    Private Sub UpdateTotalPrice()
         Dim total As Decimal = 0
-        For Each row As DataRow In cart.Rows
-            total += Convert.ToDecimal(row("Price"))
+        For Each item In cart
+            Using conn As New SqlConnection(connectionString)
+                conn.Open()
+                Dim cmd As New SqlCommand("SELECT ItemPrice FROM Inventory WHERE ItemName = @name", conn)
+                cmd.Parameters.AddWithValue("@name", item.Key)
+                total += Convert.ToDecimal(cmd.ExecuteScalar()) * item.Value
+            End Using
         Next
-        lblTotal.Text = "Total: " & total.ToString("C2")
-    End Sub
-
-    Private Sub btnCheckout_Click(sender As Object, e As EventArgs) Handles btnCheckout.Click
-        ' Check stock before proceeding
-        For Each row As DataRow In cart.Rows
-            Dim item As String = row("Item").ToString()
-            Dim quantity As Integer = Convert.ToInt32(row("Quantity"))
-
-            Dim query As String = "SELECT quantity FROM Inventory WHERE name = @name"
-            Dim command As New SqlCommand(query, connection)
-            command.Parameters.AddWithValue("@name", item)
-            connection.Open()
-            Dim stock As Integer = Convert.ToInt32(command.ExecuteScalar())
-            connection.Close()
-
-            If quantity > stock Then
-                MessageBox.Show("Stock updated. Please refresh and try again.")
-                Return
-            End If
-        Next
-
-        ' Proceed to checkout
-        For Each row As DataRow In cart.Rows
-            Dim item As String = row("Item").ToString()
-            Dim quantity As Integer = Convert.ToInt32(row("Quantity"))
-
-            Dim query As String = "UPDATE Inventory SET quantity = quantity - @quantity WHERE name = @name"
-            Dim command As New SqlCommand(query, connection)
-            command.Parameters.AddWithValue("@quantity", quantity)
-            command.Parameters.AddWithValue("@name", item)
-            connection.Open()
-            command.ExecuteNonQuery()
-            connection.Close()
-        Next
-
-        MessageBox.Show("Order placed successfully!")
-        cart.Clear()
-        LoadOrders()
-        CalculateTotal()
+        lblTotalPrice.Text = "Total: $" & total.ToString("0.00")
     End Sub
 End Class
